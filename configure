@@ -1,0 +1,79 @@
+#!/bin/bash
+
+set -e
+
+ROOT_DIR=$(pwd)
+DEPENDENCY_DIR="$ROOT_DIR"/vendor
+INCLUDE_DIR="$ROOT_DIR"/vendor/include
+
+function go_to_root {
+    cd "$ROOT_DIR"
+}
+function go_to_deps() {
+  cd "$DEPENDENCY_DIR"/"$1"
+}
+
+# Git setup
+echo "Initializing git repositories"
+
+git submodule init
+git submodule update --recursive
+
+# Prometheus setup
+
+go_to_deps prometheus-cpp
+
+git submodule init
+git submodule update --recursive
+
+if [ ! -d "_build" ]; then
+    mkdir _build
+fi
+
+cd _build
+
+echo "Configuring Prometheus..."
+cmake .. -DBUILD_SHARED_LIBS=ON -DENABLE_PUSH=OFF -DENABLE_COMPRESSION=OFF -DCMAKE_INSTALL_PREFIX=../../include
+
+echo "Building Prometheus..."
+cmake --build . --parallel 8
+
+echo "Installing Prometheus..."
+cmake --install .
+
+go_to_root
+
+#spdlog setup
+
+go_to_deps spdlog
+
+if [ ! -d "build" ]; then
+    mkdir build
+fi
+
+cd build
+
+cmake .. && cmake --build .
+
+go_to_root
+
+echo "Configuring glaze"
+
+# glaze setup
+
+go_to_deps glaze
+
+cmake --preset gcc-release -DCMAKE_BUILD_TYPE=Release \
+	-DCMAKE_INSTALL_PREFIX=../include \
+	-DCMAKE_CXX_COMPILER=/usr/bin/g++ \
+	-DCMAKE_C_COMPILER=/usr/bin/gcc \
+	-DBUILD_TESTING=FALSE \
+	-Dglaze_DEVELOPER_MODE=FALSE 
+cd build/release-gcc/
+cmake --build . --parallel 8 --target install
+
+cd ../
+rm -rf release-gcc 
+
+echo "Exiting configuration"
+
