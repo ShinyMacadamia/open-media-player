@@ -75,5 +75,7 @@ cmake --build . --parallel 8 --target install
 cd ../
 rm -rf release-gcc 
 
+go_to_root
+
 echo "Exiting configuration"
 

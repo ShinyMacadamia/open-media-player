@@ -1,0 +1,1 @@
+set(SPDLOG_SOURCE_DIR )

@@ -16,6 +16,7 @@ target_include_directories(cpp-template-libs INTERFACE src)
 target_sources(
   cpp-template-libs
   INTERFACE 
+  src/pipeline/decoder.cpp
   # ADD YOUR SOURCE FILES
 )
 
