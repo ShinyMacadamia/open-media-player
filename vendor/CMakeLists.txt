@@ -26,6 +26,9 @@ target_include_directories(dependencies INTERFACE ${LIBAV_INCLUDE_DIRS})
 find_package(SDL3 REQUIRED)
 list(APPEND INCLUDE_LIBS SDL3::SDL3)
 
+find_package(spdlog REQUIRED)
+list(APPEND INCLUDE_LIBS spdlog)
+
 target_link_libraries(
         dependencies INTERFACE
         ${INCLUDE_LIBS}

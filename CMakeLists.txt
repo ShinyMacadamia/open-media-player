@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.23.3)
-project(cpp-template)
+project(media-player)
 
 set(CMAKE_CXX_STANDARD 23)
 
@@ -20,8 +20,6 @@ target_sources(
   # ADD YOUR SOURCE FILES
 )
 
-
-add_executable(cpp-template src/main.cpp)
 if(BUILD_EXAMPLES)
 	# ADD YOUR EXAMPLES
 	add_executable(example_1 examples/example_1.cpp)
@@ -33,4 +31,5 @@ endif()
 # target_compile_options(cpp-template PRIVATE -fsanitize=address)
 # target_link_options(cpp-template PRIVATE -fsanitize=address)
 
-target_link_libraries(cpp-template PRIVATE cpp-template-libs)
+add_executable(media-player src/main.cpp)
+target_link_libraries(media-player PRIVATE cpp-template-libs)

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/glaze" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/prometheus-cpp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/prometheus-cpp/3rdparty/civetweb" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/prometheus-cpp/3rdparty/googletest" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/spdlog" vcs="Git" />
+  </component>
+</project>

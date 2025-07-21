@@ -1,6 +1,5 @@
 #pragma once
 
-#include "libavcodec/packet.h"
 #include <filesystem>
 #include <functional>
 #include <vector>
@@ -15,6 +14,7 @@ struct StreamMapping {
 };
 
 class Decoder {
+public:
   Decoder(const std::filesystem::path &path);
   ~Decoder();
 
@@ -26,6 +26,7 @@ private:
 
   AVFormatContext *demuxer_ctx_ = nullptr;
   AVCodecContext *decoder_ctx_ = nullptr;
+  AVFrame *frame_ = av_frame_alloc();
   std::vector<StreamMapping> stream_mapping_;
   std::function<bool(int)> find_fn_;
 };

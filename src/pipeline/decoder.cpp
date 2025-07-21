@@ -1,11 +1,17 @@
+#include <cerrno>
 #include <pipeline/decoder.h>
+#include <print>
 extern "C" {
+#include "libavcodec/packet.h"
+#include "libavutil/error.h"
+#include "libavutil/frame.h"
 #include <libavcodec/avcodec.h>
 #include <libavcodec/codec.h>
 #include <libavformat/avformat.h>
 #include <libavutil/avutil.h>
 }
 #include <common/exception.h>
+#include <common/logger.h>
 
 Decoder::Decoder(const std::filesystem::path &path) {
   if (auto ret =
@@ -18,6 +24,7 @@ Decoder::Decoder(const std::filesystem::path &path) {
     throw common::FFmpegException(
         ret, "Cannot find stream info with avformat_find_stream_info");
   }
+  InitDecoder();
 }
 
 Decoder::~Decoder() {
@@ -26,6 +33,9 @@ Decoder::~Decoder() {
   }
   if (demuxer_ctx_) {
     avformat_close_input(&demuxer_ctx_);
+  }
+  if (frame_) {
+    av_frame_free(&frame_);
   }
 }
 
@@ -65,7 +75,19 @@ void Decoder::Decode(AVPacket *packet) {
   while (av_read_frame(demuxer_ctx_, packet) >= 0) {
     if (FindStream(packet->stream_index) != -1) {
       if (auto ret = avcodec_send_packet(decoder_ctx_, packet); ret < 0) {
-        Logger
+        Logger::Error("Cannot send packet to the decoder: {}", ret);
+        continue;
+      }
+      int ret = 0;
+      while (ret >= 0) {
+        ret = avcodec_receive_frame(decoder_ctx_, frame_);
+        if (ret < 0) {
+          if (ret == AVERROR_EOF || AVERROR(EAGAIN)) {
+            break;
+          }
+          Logger::Error("cannot decode frame: {}", ret);
+        }
+        std::println("{}", frame_->height);
       }
     }
   }
